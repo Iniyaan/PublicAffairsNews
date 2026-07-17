@@ -1,0 +1,21 @@
+{
+  "state": [
+    "https://www.thehindu.com/",
+    "https://www.dailythanthi.com/",
+    "https://www.dinamalar.com/",
+    "https://www.thanthitv.com/",
+    "https://www.puthiyathalaimurai.com/"
+  ],
+
+  "national": [
+    "https://timesofindia.indiatimes.com/",
+    "https://www.thehindu.com/",
+    "https://www.ndtv.com/",
+    "https://www.indiatoday.in/",
+    "https://www.news18.com/"
+  ],
+
+  "global": [
+    "https://news.google.com/"
+  ]
+}
