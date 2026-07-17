@@ -1,0 +1,12 @@
+name: Public Affairs Daily News
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository Created Successfully
+        run: echo "Repository structure is ready."
