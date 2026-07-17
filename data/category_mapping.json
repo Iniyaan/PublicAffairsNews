@@ -1,0 +1,141 @@
+{
+    "Government & Public Affairs": [
+        "Chief Minister",
+        "Prime Minister",
+        "Government",
+        "Cabinet",
+        "Assembly",
+        "Parliament",
+        "Policy",
+        "Government Order",
+        "Government Notification",
+        "Collector",
+        "District Administration",
+        "SIPCOT",
+        "SIDCO",
+        "Industrial Corridor",
+        "Ease of Doing Business",
+        "Stakeholder Meeting"
+    ],
+
+    "Manufacturing & Industry": [
+        "Manufacturing",
+        "Factory",
+        "Production",
+        "Plant Expansion",
+        "Capacity Expansion",
+        "Industrial Automation",
+        "Factory Safety",
+        "Machine Upgrade",
+        "Footwear Industry",
+        "Leather Industry",
+        "Apparel Industry",
+        "Industrial Investment"
+    ],
+
+    "Finance & Economy": [
+        "Budget",
+        "GST",
+        "RBI",
+        "Inflation",
+        "Interest Rate",
+        "FDI",
+        "FPI",
+        "PLI Scheme",
+        "Corporate Tax",
+        "Subsidy",
+        "Grant",
+        "Financial Assistance"
+    ],
+
+    "Legal & Compliance": [
+        "Court",
+        "Supreme Court",
+        "High Court",
+        "NGT",
+        "Legal Notice",
+        "Compliance",
+        "Factory Act",
+        "Labour Code",
+        "Environmental Clearance",
+        "Pollution Control Board",
+        "Consent to Operate",
+        "Consent to Establish"
+    ],
+
+    "Employment & Skill Development": [
+        "Employment",
+        "Recruitment",
+        "Hiring",
+        "Walk-in Interview",
+        "Skill Development",
+        "PMKVY",
+        "NAPS",
+        "NATS",
+        "ITI",
+        "Polytechnic",
+        "District Employment Office",
+        "TNSDC"
+    ],
+
+    "Supply Chain & Logistics": [
+        "Supply Chain",
+        "Vendor",
+        "Supplier",
+        "Logistics",
+        "Warehouse",
+        "Freight",
+        "Shipping",
+        "Container",
+        "Port",
+        "Import",
+        "Export",
+        "Customs"
+    ],
+
+    "Infrastructure & Utilities": [
+        "Power",
+        "TANGEDCO",
+        "TNEB",
+        "Electricity",
+        "Water Supply",
+        "Drainage",
+        "Road",
+        "Bridge",
+        "Pipeline",
+        "Substation",
+        "Transformer",
+        "Industrial Infrastructure"
+    ],
+
+    "Risk & Emergency": [
+        "Cyclone",
+        "Heavy Rain",
+        "Flood",
+        "Earthquake",
+        "Heatwave",
+        "Fire",
+        "Industrial Accident",
+        "Chemical Leak",
+        "Pandemic",
+        "Disease Outbreak",
+        "Business Continuity"
+    ],
+
+    "Global Affairs": [
+        "Trade War",
+        "US Tariff",
+        "China Manufacturing",
+        "Vietnam Manufacturing",
+        "Bangladesh Garment Industry",
+        "FTA",
+        "CEPA",
+        "RCEP",
+        "WTO",
+        "Global Economy",
+        "International Trade",
+        "Export Restriction",
+        "Sanctions",
+        "Geopolitics"
+    ]
+}
