@@ -1,0 +1,206 @@
+/* =====================================================
+   Public Affairs Daily Intelligence Portal
+   Version 1.0
+===================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+
+    background:#f4f6f9;
+
+    color:#333;
+
+}
+
+/* ================= HEADER ================= */
+
+header{
+
+    background:#0d47a1;
+
+    color:white;
+
+    padding:25px;
+
+    text-align:center;
+
+}
+
+header h1{
+
+    font-size:34px;
+
+    margin-bottom:10px;
+
+}
+
+header p{
+
+    font-size:16px;
+
+}
+
+/* ================= MAIN ================= */
+
+main{
+
+    width:95%;
+
+    margin:auto;
+
+    padding:20px;
+
+}
+
+/* ================= SUMMARY ================= */
+
+section{
+
+    margin-top:30px;
+
+}
+
+section h1{
+
+    color:#0d47a1;
+
+    margin-bottom:20px;
+
+    border-left:8px solid #0d47a1;
+
+    padding-left:12px;
+
+}
+
+/* ================= CARD ================= */
+
+.card{
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+    box-shadow:0px 2px 8px rgba(0,0,0,0.15);
+
+    transition:0.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.card h2{
+
+    color:#1565c0;
+
+    margin-bottom:15px;
+
+    font-size:22px;
+
+}
+
+.card p{
+
+    margin-bottom:12px;
+
+    line-height:1.6;
+
+}
+
+/* ================= BUTTON ================= */
+
+.card a{
+
+    display:inline-block;
+
+    margin-top:10px;
+
+    background:#1565c0;
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:10px 18px;
+
+    border-radius:5px;
+
+}
+
+.card a:hover{
+
+    background:#0d47a1;
+
+}
+
+/* ================= PRIORITY ================= */
+
+.high{
+
+    color:red;
+
+    font-weight:bold;
+
+}
+
+.medium{
+
+    color:orange;
+
+    font-weight:bold;
+
+}
+
+.low{
+
+    color:green;
+
+    font-weight:bold;
+
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+
+    text-align:center;
+
+    margin-top:50px;
+
+    padding:25px;
+
+    background:#eceff1;
+
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:768px){
+
+header h1{
+
+font-size:24px;
+
+}
+
+.card{
+
+padding:15px;
+
+}
+
+}
