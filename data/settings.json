@@ -1,0 +1,10 @@
+{
+  "update_time": "15:00 Asia/Kolkata",
+  "news_window_hours": 36,
+  "remove_duplicates": true,
+  "archive_reports": true,
+  "generate_ai_summary": true,
+  "minimum_priority": "medium",
+  "language": "en",
+  "timezone": "Asia/Kolkata"
+}
