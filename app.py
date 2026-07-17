@@ -1,79 +1,137 @@
-from website import generate_website
 """
-===========================================================
+==============================================================
 Public Affairs Daily Intelligence Portal
 Main Application
-Version : 1.0
-===========================================================
+Version : 2.0
+Author : Iniyaan
+==============================================================
 """
 
-from utils import log
+import time
+import logging
 
 from fetch_news import fetch_all_news
+from deduplicate import process_news
+from categorizer import categorize_news, sort_articles
+from ai_analysis import analyze_news
+from website import build_dashboard
 
-from deduplicate import (
-    remove_duplicates,
-    save_history
+# ==========================================================
+# LOGGER
+# ==========================================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s"
 )
 
-from categorizer import categorize_news
-
-from ai_analysis import analyze_news
+logger = logging.getLogger(__name__)
 
 
-def main():
+# ==========================================================
+# BANNER
+# ==========================================================
 
-    log("==============================================")
+def banner():
 
-    log("Public Affairs Daily Intelligence Portal")
+    logger.info("")
 
-    log("==============================================")
+    logger.info("=" * 70)
 
-    # ------------------------------------------
+    logger.info("PUBLIC AFFAIRS DAILY INTELLIGENCE PORTAL")
 
-    log("Fetching News...")
+    logger.info("=" * 70)
+
+    logger.info("")
+
+
+# ==========================================================
+# PIPELINE
+# ==========================================================
+
+def run():
+
+    start = time.time()
+
+    banner()
+
+    # ------------------------------------------------------
+
+    logger.info("STEP 1 : Fetching News")
 
     news = fetch_all_news()
 
-    log(f"Articles Collected : {len(news)}")
+    logger.info("Articles Collected : %s", len(news))
 
-    # ------------------------------------------
+    # ------------------------------------------------------
 
-    log("Removing Duplicate News...")
+    logger.info("STEP 2 : Removing Duplicates")
 
-    news = remove_duplicates(news)
+    news = process_news(news)
 
-    log(f"Unique Articles : {len(news)}")
+    logger.info("Remaining Articles : %s", len(news))
 
-    # ------------------------------------------
+    # ------------------------------------------------------
 
-    log("Categorizing News...")
+    logger.info("STEP 3 : Categorizing")
 
     news = categorize_news(news)
 
-    # ------------------------------------------
+    news = sort_articles(news)
 
-    log("Generating AI Analysis...")
+    logger.info("Categorization Completed")
+
+    # ------------------------------------------------------
+
+    logger.info("STEP 4 : AI Analysis")
 
     news = analyze_news(news)
 
-    # ------------------------------------------
+    logger.info("AI Analysis Completed")
 
-    log("Saving History...")
+    # ------------------------------------------------------
 
-    save_history(news)
+    logger.info("STEP 5 : Generating Website")
 
-    # ------------------------------------------
+    build_dashboard(news)
 
-    log("Generating Website...")
-generate_website(news)
-    # ------------------------------------------
+    logger.info("Website Generated")
 
-    log("Completed Successfully.")
+    # ------------------------------------------------------
 
-    return news
+    end = time.time()
 
+    logger.info("")
+
+    logger.info("=" * 70)
+
+    logger.info("PROCESS COMPLETED SUCCESSFULLY")
+
+    logger.info("=" * 70)
+
+    logger.info("")
+
+    logger.info("Execution Time : %.2f Seconds", end - start)
+
+    logger.info("Articles Published : %s", len(news))
+
+    logger.info("")
+
+
+# ==========================================================
+# MAIN
+# ==========================================================
 
 if __name__ == "__main__":
 
-    main()
+    try:
+
+        run()
+
+    except KeyboardInterrupt:
+
+        logger.warning("Program Interrupted.")
+
+    except Exception as error:
+
+        logger.exception(error)
