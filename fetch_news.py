@@ -1,177 +1,294 @@
 """
-==========================================================
+==============================================================
 Public Affairs Daily Intelligence Portal
-Module : News Fetcher
-==========================================================
+Module : Fetch News
+Version : 2.0
+Author : Iniyaan
+==============================================================
 """
 
+import time
+import logging
+import urllib.parse
+from datetime import datetime, timedelta, timezone
+
 import feedparser
-from datetime import datetime, timedelta
+import requests
 from dateutil import parser
 
 from config import (
+    NEWS_WINDOW_HOURS,
     get_keywords,
-    get_websites,
-    NEWS_WINDOW_HOURS
+    get_websites
 )
 
-# ----------------------------------------------------------
-# Google News RSS
-# ----------------------------------------------------------
+# ==========================================================
+# LOGGER
+# ==========================================================
+
+logging.basicConfig(
+
+    level=logging.INFO,
+
+    format="%(asctime)s | %(levelname)s | %(message)s"
+
+)
+
+logger = logging.getLogger(__name__)
+
+# ==========================================================
+# CONSTANTS
+# ==========================================================
 
 GOOGLE_NEWS_RSS = (
-    "https://news.google.com/rss/search?q={query}"
-    "&hl=en-IN&gl=IN&ceid=IN:en"
+
+    "https://news.google.com/rss/search"
+
 )
 
+HEADERS = {
 
-# ----------------------------------------------------------
-# Build Search Query
-# ----------------------------------------------------------
+    "User-Agent":
+
+    "Mozilla/5.0 PublicAffairsNewsBot/2.0"
+
+}
+
+REQUEST_TIMEOUT = 30
+
+MAX_RETRY = 3
+
+SLEEP_TIME = 2
+
+# ==========================================================
+# GOOGLE QUERY
+# ==========================================================
 
 def build_query(keyword, websites):
 
-    site_filter = " OR ".join(
-        f"site:{site}" for site in websites
+    """
+    Build Google News query
+
+    Example
+
+    SIPCOT
+    site:thehindu.com
+    OR
+    site:timesofindia.com
+    """
+
+    site_query = " OR ".join(
+
+        f"site:{site}"
+
+        for site in websites
+
     )
 
-    query = f'{keyword} ({site_filter})'
+    query = (
 
-    return query.replace(" ", "%20")
+        f'"{keyword}" '
 
+        f'({site_query}) '
 
-# ----------------------------------------------------------
-# Check Article Date
-# ----------------------------------------------------------
+        "when:2d"
 
-def is_recent(published):
+    )
+
+    return query
+
+# ==========================================================
+# RSS URL
+# ==========================================================
+
+def rss_url(query):
+
+    encoded = urllib.parse.quote(query)
+
+    return (
+
+        f"{GOOGLE_NEWS_RSS}"
+
+        f"?q={encoded}"
+
+        "&hl=en-IN"
+
+        "&gl=IN"
+
+        "&ceid=IN:en"
+
+    )
+
+# ==========================================================
+# HTTP REQUEST
+# ==========================================================
+
+def get_feed(url):
+
+    """
+    Download RSS safely
+    """
+
+    for attempt in range(MAX_RETRY):
+
+        try:
+
+            response = requests.get(
+
+                url,
+
+                headers=HEADERS,
+
+                timeout=REQUEST_TIMEOUT
+
+            )
+
+            response.raise_for_status()
+
+            return feedparser.parse(
+
+                response.content
+
+            )
+
+        except Exception as error:
+
+            logger.warning(
+
+                "Attempt %s failed : %s",
+
+                attempt + 1,
+
+                error
+
+            )
+
+            time.sleep(SLEEP_TIME)
+
+    logger.error(
+
+        "Unable to download RSS Feed."
+
+    )
+
+    return None
+
+# ==========================================================
+# DATE FILTER
+# ==========================================================
+
+def within_window(date_string):
+
+    """
+    Return True
+
+    if article is
+
+    within NEWS_WINDOW_HOURS
+    """
 
     try:
 
-        published_date = parser.parse(published)
+        published = parser.parse(date_string)
 
-        limit = datetime.now(
-            published_date.tzinfo
-        ) - timedelta(hours=NEWS_WINDOW_HOURS)
+        if published.tzinfo is None:
 
-        return published_date >= limit
+            published = published.replace(
+
+                tzinfo=timezone.utc
+
+            )
+
+        now = datetime.now(
+
+            timezone.utc
+
+        )
+
+        cutoff = now - timedelta(
+
+            hours=NEWS_WINDOW_HOURS
+
+        )
+
+        return published >= cutoff
 
     except Exception:
 
         return False
 
+# ==========================================================
+# CLEAN TITLE
+# ==========================================================
 
-# ----------------------------------------------------------
-# Fetch News
-# ----------------------------------------------------------
+def clean_title(title):
 
-def fetch_category(category):
+    return (
 
-    keywords = get_keywords(category)
+        title
 
-    websites = get_websites(category)
+        .replace("\n", " ")
 
-    articles = []
+        .replace("\r", " ")
 
-    visited = set()
+        .strip()
 
-    for keyword in keywords:
+    )
 
-        query = build_query(keyword, websites)
+# ==========================================================
+# SCORE ARTICLE
+# ==========================================================
 
-        url = GOOGLE_NEWS_RSS.format(query=query)
+def score_article(article):
 
-        feed = feedparser.parse(url)
+    score = 0
 
-        for entry in feed.entries:
+    title = article["title"].lower()
 
-            if not hasattr(entry, "published"):
-                continue
+    summary = article["summary"].lower()
 
-            if not is_recent(entry.published):
-                continue
+    important = [
 
-            if entry.link in visited:
-                continue
+        "government",
 
-            visited.add(entry.link)
+        "policy",
 
-            articles.append({
+        "cabinet",
 
-                "category": category,
+        "budget",
 
-                "keyword": keyword,
+        "investment",
 
-                "title": entry.title,
+        "manufacturing",
 
-                "link": entry.link,
+        "industry",
 
-                "published": entry.published,
+        "employment",
 
-                "summary": entry.summary
-                if hasattr(entry, "summary")
-                else "",
+        "labour",
 
-                "source": entry.source.title
-                if hasattr(entry, "source")
-                else "Unknown"
+        "infrastructure",
 
-            })
+        "finance",
 
-    return articles
+        "trade",
 
+        "export",
 
-# ----------------------------------------------------------
-# Fetch All News
-# ----------------------------------------------------------
+        "import",
 
-def fetch_all_news():
+        "power"
 
-    news = []
+    ]
 
-    news.extend(fetch_category("state"))
+    for word in important:
 
-    news.extend(fetch_category("national"))
+        if word in title:
 
-    news.extend(fetch_category("global"))
+            score += 5
 
-    return news
+        if word in summary:
 
+            score += 2
 
-# ----------------------------------------------------------
-# Test
-# ----------------------------------------------------------
-
-if __name__ == "__main__":
-
-    print("=" * 60)
-
-    print("Fetching Public Affairs News...")
-
-    print("=" * 60)
-
-    all_news = fetch_all_news()
-
-    print()
-
-    print("Articles Found :", len(all_news))
-
-    print()
-
-    for article in all_news[:10]:
-
-        print("-" * 60)
-
-        print(article["title"])
-
-        print(article["source"])
-
-        print(article["published"])
-
-        print(article["category"])
-
-        print(article["keyword"])
-
-        print(article["link"])
-
-        print()
+    return score
