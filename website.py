@@ -1,77 +1,35 @@
 """
 ==============================================================
 Public Affairs Daily Intelligence Portal
-Module : Website Generator
-Version : 2.0
-Author : Iniyaan
+Website Generator
 ==============================================================
 """
 
 import os
-import logging
 from datetime import datetime
-
-# ==========================================================
-# LOGGER
-# ==========================================================
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s"
-)
-
-logger = logging.getLogger(__name__)
-
-# ==========================================================
-# WEBSITE TITLE
-# ==========================================================
 
 TITLE = "Public Affairs Daily Intelligence Portal"
 
-SUBTITLE = (
-    "Government • Manufacturing • Public Affairs "
-    "• Industry Intelligence"
-)
-
-# ==========================================================
-# DATE
-# ==========================================================
-
-def generated_time():
-
-    now = datetime.now()
-
-    return now.strftime("%d-%m-%Y %I:%M %p")
-
-
-# ==========================================================
-# HTML HEADER
-# ==========================================================
+# ----------------------------------------------------------
 
 def html_header():
 
-    return f"""
-<!DOCTYPE html>
+    now = datetime.now().strftime("%d-%m-%Y %I:%M %p")
 
-<html lang="en">
-
+    return f"""<!DOCTYPE html>
+<html>
 <head>
 
-<meta charset="UTF-8">
+<meta charset="utf-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1">
 
 <title>{TITLE}</title>
 
-<link
-rel="stylesheet"
-href="style.css">
+<link rel="stylesheet" href="style.css">
 
-<script
-src="script.js"
-defer></script>
+<script src="script.js"></script>
 
 </head>
 
@@ -79,385 +37,63 @@ defer></script>
 
 <header>
 
-<div class="header">
-
 <h1>{TITLE}</h1>
 
-<p>{SUBTITLE}</p>
-
-<p class="date">
-
-Last Updated :
-{generated_time()}
-
-</p>
-
-</div>
+<p>Updated : {now}</p>
 
 </header>
 
-<main>
+<div class="container">
 """
 
+# ----------------------------------------------------------
 
-# ==========================================================
-# SUMMARY CARD
-# ==========================================================
+def html_footer():
 
-def summary_card(news):
+    return """
+</div>
 
-    total = len(news)
+<footer>
 
-    high = len(
+<p>&copy; 2026 Public Affairs Daily Intelligence Portal</p>
 
-        [
+</footer>
 
-            n
+</body>
 
-            for n in news
+</html>
+"""
 
-            if n.get(
+# ----------------------------------------------------------
 
-                "priority",
-
-                ""
-
-            ) == "High"
-
-        ]
-
-    )
-
-    updated = len(
-
-        [
-
-            n
-
-            for n in news
-
-            if n.get(
-
-                "updated",
-
-                False
-
-            )
-
-        ]
-
-    )
+def create_card(article):
 
     return f"""
+<div class="card">
 
-<section>
+<h2>{article['title']}</h2>
 
-<h2>Today's Summary</h2>
+<p><b>Source:</b> {article['source']}</p>
 
-<div class="summary-grid">
+<p><b>Published:</b> {article['published']}</p>
 
-<div class="summary-card">
+<p>{article.get('summary','')}</p>
 
-<h3>Total News</h3>
+<p><b>Priority:</b> {article.get('priority','Low')}</p>
 
-<p>{total}</p>
+<p><b>Departments:</b> {", ".join(article.get("departments",[]))}</p>
 
-</div>
+<p><b>Categories:</b> {", ".join(article.get("categories",[]))}</p>
 
-<div class="summary-card">
-
-<h3>High Priority</h3>
-
-<p>{high}</p>
-
-</div>
-
-<div class="summary-card">
-
-<h3>Updated Stories</h3>
-
-<p>{updated}</p>
+<p><a href="{article['link']}" target="_blank">
+Read More
+</a></p>
 
 </div>
-
-</div>
-
-</section>
-
 """
-
-
-# ==========================================================
-# SECTION TITLE
-# ==========================================================
-
-def section(title):
-
-    return f"""
-
-<section>
-
-<h2>{title}</h2>
-
-"""
-    # ==========================================================
-# PRIORITY COLOR
-# ==========================================================
-
-def priority_class(priority):
-
-    priority = priority.lower()
-
-    if priority == "high":
-
-        return "priority-high"
-
-    if priority == "medium":
-
-        return "priority-medium"
-
-    return "priority-low"
-
-
-# ==========================================================
-# CREATE NEWS CARD
-# ==========================================================
-
-def news_card(article):
-
-    priority = article.get(
-
-        "priority",
-
-        "Low"
-
-    )
-
-    badge = priority_class(
-
-        priority
-
-    )
-
-    updated = ""
-
-    if article.get(
-
-        "updated",
-
-        False
-
-    ):
-
-        updated = """
-
-<span class="updated">
-
-UPDATED
-
-</span>
-
-"""
-
-    departments = ""
-
-    for department in article.get(
-
-        "departments",
-
-        []
-
-    ):
-
-        departments += f"""
-
-<span class="department">
-
-{department}
-
-</span>
-
-"""
-
-    categories = ""
-
-    for category in article.get(
-
-        "categories",
-
-        []
-
-    ):
-
-        categories += f"""
-
-<span class="category">
-
-{category}
-
-</span>
-
-"""
-
-    return f"""
-
-<div class="news-card">
-
-<div class="card-header">
-
-<h3>
-
-{article['title']}
-
-</h3>
-
-<span class="{badge}">
-
-{priority}
-
-</span>
-
-{updated}
-
-</div>
-
-<div class="card-body">
-
-<p>
-
-<strong>Source :</strong>
-
-{article['source']}
-
-</p>
-
-<p>
-
-<strong>Published :</strong>
-
-{article['published']}
-
-</p>
-
-<p>
-
-<strong>Summary :</strong>
-
-{article.get('summary','')}
-
-</p>
-
-<p>
-
-<strong>Problem :</strong>
-
-{article.get('problem','')}
-
-</p>
-
-<p>
-
-<strong>Business Impact :</strong>
-
-{article.get('business_impact','')}
-
-</p>
-
-<p>
-
-<strong>Recommendation :</strong>
-
-{article.get('recommendation','')}
-
-</p>
-
-<p>
-
-<strong>Confidence :</strong>
-
-{article.get('confidence',0)}
-
-</p>
-
-<div class="category-container">
-
-{categories}
-
-</div>
-
-<div class="department-container">
-
-{departments}
-
-</div>
-
-<p>
-
-<a
-
-href="{article['link']}"
-
-target="_blank">
-
-Read Original News →
-
-</a>
-
-</p>
-
-</div>
-
-</div>
-
-"""
-
-
-# ==========================================================
-# GENERATE NEWS SECTION
-# ==========================================================
-
-def generate_news_section(
-
-    title,
-
-    articles
-
-):
-
-    html = section(title)
-
-    if len(articles) == 0:
-
-        html += """
-
-<p>
-
-No News Available
-
-</p>
-
-"""
-
-    else:
-
-        for article in articles:
-
-            html += news_card(
-
-                article
-
-            )
-
-    html += """
-
-</section>
-
-"""
-
-    return html
-# ==========================================================
-# FILTER ARTICLES
-# ==========================================================
+# ----------------------------------------------------------
+# FILTER FUNCTIONS
+# ----------------------------------------------------------
 
 def filter_region(news, region):
 
@@ -473,14 +109,12 @@ def filter_region(news, region):
 
             ""
 
-        ).lower()
-
-        == region.lower()
+        ).lower() == region.lower()
 
     ]
 
 
-def filter_priority(news):
+def filter_priority(news, priority):
 
     return [
 
@@ -494,22 +128,142 @@ def filter_priority(news):
 
             ""
 
-        ) == "High"
+        ).lower() == priority.lower()
 
     ]
 
 
-# ==========================================================
+# ----------------------------------------------------------
+# CREATE SECTION
+# ----------------------------------------------------------
+
+def create_section(title, articles):
+
+    html = f"""
+
+<section>
+
+<h2>{title}</h2>
+
+"""
+
+    if len(articles) == 0:
+
+        html += """
+
+<p>No News Available</p>
+
+"""
+
+    else:
+
+        for article in articles:
+
+            html += create_card(article)
+
+    html += """
+
+</section>
+
+"""
+
+    return html
+
+
+# ----------------------------------------------------------
+# DASHBOARD SUMMARY
+# ----------------------------------------------------------
+
+def dashboard_summary(news):
+
+    total = len(news)
+
+    state = len(filter_region(news, "State"))
+
+    national = len(filter_region(news, "National"))
+
+    global_news = len(filter_region(news, "Global"))
+
+    high = len(filter_priority(news, "High"))
+
+    medium = len(filter_priority(news, "Medium"))
+
+    low = len(filter_priority(news, "Low"))
+
+    return f"""
+
+<div class="dashboard">
+
+<div class="box">
+
+<h3>Total News</h3>
+
+<p>{total}</p>
+
+</div>
+
+<div class="box">
+
+<h3>State</h3>
+
+<p>{state}</p>
+
+</div>
+
+<div class="box">
+
+<h3>National</h3>
+
+<p>{national}</p>
+
+</div>
+
+<div class="box">
+
+<h3>Global</h3>
+
+<p>{global_news}</p>
+
+</div>
+
+<div class="box">
+
+<h3>High Priority</h3>
+
+<p>{high}</p>
+
+</div>
+
+<div class="box">
+
+<h3>Medium Priority</h3>
+
+<p>{medium}</p>
+
+</div>
+
+<div class="box">
+
+<h3>Low Priority</h3>
+
+<p>{low}</p>
+
+</div>
+
+</div>
+
+"""
+
+
+# ----------------------------------------------------------
 # SEARCH BAR
-# ==========================================================
+# ----------------------------------------------------------
 
 def search_bar():
 
     return """
 
-<section>
-
-<div class="search-container">
+<div class="search">
 
 <input
 
@@ -523,84 +277,35 @@ onkeyup="searchNews()">
 
 </div>
 
-</section>
-
 """
-
-
-# ==========================================================
-# DASHBOARD STATISTICS
-# ==========================================================
-
-def dashboard_statistics(news):
-
-    state = len(filter_region(news, "State"))
-
-    national = len(filter_region(news, "National"))
-
-    global_news = len(filter_region(news, "Global"))
-
-    return f"""
-
-<section>
-
-<div class="dashboard-grid">
-
-<div class="dashboard-card">
-
-<h3>State</h3>
-
-<p>{state}</p>
-
-</div>
-
-<div class="dashboard-card">
-
-<h3>National</h3>
-
-<p>{national}</p>
-
-</div>
-
-<div class="dashboard-card">
-
-<h3>Global</h3>
-
-<p>{global_news}</p>
-
-</div>
-
-</div>
-
-</section>
-
-"""
-
-
-# ==========================================================
-# HIGH PRIORITY ALERTS
-# ==========================================================
+# ----------------------------------------------------------
+# HIGH PRIORITY SECTION
+# ----------------------------------------------------------
 
 def high_priority_section(news):
 
-    articles = filter_priority(news)
-
-    return generate_news_section(
+    return create_section(
 
         "🚨 High Priority Alerts",
 
-        articles
+        filter_priority(
+
+            news,
+
+            "High"
+
+        )
 
     )
 
 
-# ==========================================================
+# ----------------------------------------------------------
 # STATE NEWS
-# ==========================================================
+# ----------------------------------------------------------
 
-def state_news(news):
+def state_section(news):
 
-    return generate_news_section(
+    return create_section(
 
         "🏛 Tamil Nadu / State News",
 
@@ -615,13 +320,13 @@ def state_news(news):
     )
 
 
-# ==========================================================
+# ----------------------------------------------------------
 # NATIONAL NEWS
-# ==========================================================
+# ----------------------------------------------------------
 
-def national_news(news):
+def national_section(news):
 
-    return generate_news_section(
+    return create_section(
 
         "🇮🇳 National News",
 
@@ -636,13 +341,13 @@ def national_news(news):
     )
 
 
-# ==========================================================
+# ----------------------------------------------------------
 # GLOBAL NEWS
-# ==========================================================
+# ----------------------------------------------------------
 
-def global_news(news):
+def global_section(news):
 
-    return generate_news_section(
+    return create_section(
 
         "🌍 Global News",
 
@@ -657,120 +362,44 @@ def global_news(news):
     )
 
 
-# ==========================================================
-# ARCHIVE LINK
-# ==========================================================
+# ----------------------------------------------------------
+# GENERATE HTML
+# ----------------------------------------------------------
 
-def archive_section():
-
-    return """
-
-<section>
-
-<h2>Archive</h2>
-
-<p>
-
-Previous reports are available inside
-
-the archive folder.
-
-</p>
-
-</section>
-
-# ==========================================================
-# HTML FOOTER
-# ==========================================================
-
-def html_footer():
-
-    return """
-</main>
-
-<footer>
-
-<p>
-&copy; 2026 Public Affairs Daily Intelligence Portal
-</p>
-
-<p>
-Automatically Generated by GitHub Actions
-</p>
-
-</footer>
-
-</body>
-
-</html>
-"""
-
-    return """
-
-def html_footer():
-
-    return """
-</main>
-
-<footer>
-
-<p>&copy; 2026 Public Affairs Daily Intelligence Portal</p>
-
-<p>Automatically Generated by GitHub Actions</p>
-
-</footer>
-
-</body>
-
-</html>
-
-"""
-
-
-# ==========================================================
-# GENERATE COMPLETE WEBSITE
-# ==========================================================
-
-def generate_website(news):
-
-    logger.info("Generating Website...")
+def generate_html(news):
 
     html = ""
 
     html += html_header()
 
-    html += summary_card(news)
+    html += dashboard_summary(news)
 
     html += search_bar()
 
-    html += dashboard_statistics(news)
-
     html += high_priority_section(news)
 
-    html += state_news(news)
+    html += state_section(news)
 
-    html += national_news(news)
+    html += national_section(news)
 
-    html += global_news(news)
-
-    html += archive_section()
+    html += global_section(news)
 
     html += html_footer()
 
     return html
 
 
-# ==========================================================
-# SAVE INDEX.HTML
-# ==========================================================
+# ----------------------------------------------------------
+# SAVE WEBSITE
+# ----------------------------------------------------------
 
-def save_index(news, filename="index.html"):
+def save_website(news):
 
-    html = generate_website(news)
+    html = generate_html(news)
 
     with open(
 
-        filename,
+        "index.html",
 
         "w",
 
@@ -780,18 +409,12 @@ def save_index(news, filename="index.html"):
 
         file.write(html)
 
-    logger.info(
-
-        "Website Generated : %s",
-
-        filename
-
-    )
+    print("index.html generated successfully.")
 
 
-# ==========================================================
+# ----------------------------------------------------------
 # SAVE ARCHIVE
-# ==========================================================
+# ----------------------------------------------------------
 
 def save_archive(news):
 
@@ -805,8 +428,6 @@ def save_archive(news):
 
     )
 
-    html = generate_website(news)
-
     with open(
 
         filename,
@@ -817,83 +438,77 @@ def save_archive(news):
 
     ) as file:
 
-        file.write(html)
+        file.write(
 
-    logger.info(
+            generate_html(news)
 
-        "Archive Saved : %s",
+        )
 
-        filename
+    print(
+
+        f"{filename} created successfully."
 
     )
-
-
-# ==========================================================
-# MAIN FUNCTION
-# ==========================================================
+    # ----------------------------------------------------------
+# BUILD DASHBOARD
+# ----------------------------------------------------------
 
 def build_dashboard(news):
 
-    save_index(news)
+    """
+    Generate website files.
+    """
+
+    save_website(news)
 
     save_archive(news)
 
+    print("Dashboard Generated Successfully.")
 
-# ==========================================================
+
+# ----------------------------------------------------------
 # MAIN TEST
-# ==========================================================
+# ----------------------------------------------------------
 
 if __name__ == "__main__":
 
     from fetch_news import fetch_all_news
     from deduplicate import process_news
-    from categorizer import (
-        categorize_news,
-        sort_articles
-    )
+    from categorizer import categorize_news, sort_articles
     from ai_analysis import analyze_news
-
-    logger.info("=" * 70)
-    logger.info("Website Generator")
-    logger.info("=" * 70)
 
     try:
 
-        # Fetch
+        print("=" * 70)
+        print("PUBLIC AFFAIRS DAILY INTELLIGENCE PORTAL")
+        print("=" * 70)
 
+        # STEP 1
+        print("\nFetching News...")
         news = fetch_all_news()
 
-        # Remove duplicates
-
+        # STEP 2
+        print("Removing Duplicates...")
         news = process_news(news)
 
-        # Categorize
-
+        # STEP 3
+        print("Categorizing...")
         news = categorize_news(news)
-
         news = sort_articles(news)
 
-        # AI Analysis
-
+        # STEP 4
+        print("Running AI Analysis...")
         news = analyze_news(news)
 
-        # Build Website
-
+        # STEP 5
+        print("Generating Website...")
         build_dashboard(news)
 
-        logger.info("")
-        logger.info("=" * 70)
-        logger.info("Website Generated Successfully")
-        logger.info("=" * 70)
+        print("\nCompleted Successfully")
+        print(f"Articles Published : {len(news)}")
 
     except Exception as error:
 
-        logger.exception(
+        print("\nWebsite Generation Failed")
 
-            "Website Generation Failed : %s",
-
-            error
-
-        )"""
-
-    
+        raise error
