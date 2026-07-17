@@ -1,0 +1,125 @@
+{
+    "Public Affairs": [
+        "Government",
+        "Government Order",
+        "Government Notification",
+        "Collector",
+        "District Administration",
+        "Cabinet",
+        "Policy",
+        "SIPCOT",
+        "SIDCO",
+        "Revenue Department",
+        "Parliament",
+        "Assembly"
+    ],
+
+    "HR": [
+        "Labour",
+        "Labour Code",
+        "Minimum Wage",
+        "Employment",
+        "Recruitment",
+        "Hiring",
+        "Skill Development",
+        "PMKVY",
+        "NAPS",
+        "NATS",
+        "ITI",
+        "TNSDC",
+        "District Employment Office",
+        "Employee",
+        "Contract Labour",
+        "Union"
+    ],
+
+    "Finance": [
+        "GST",
+        "Income Tax",
+        "Corporate Tax",
+        "Budget",
+        "Union Budget",
+        "RBI",
+        "FDI",
+        "FPI",
+        "PLI Scheme",
+        "Subsidy",
+        "Grant",
+        "Interest Rate",
+        "Inflation",
+        "Tariff"
+    ],
+
+    "Legal": [
+        "Court",
+        "Supreme Court",
+        "High Court",
+        "Tribunal",
+        "Legal Notice",
+        "Compliance",
+        "Factory Act",
+        "Labour Act",
+        "Pollution Control Board",
+        "NGT",
+        "Consent to Operate",
+        "Consent to Establish"
+    ],
+
+    "Engineering": [
+        "Power",
+        "Electricity",
+        "TANGEDCO",
+        "TNEB",
+        "Transformer",
+        "Substation",
+        "Road",
+        "Bridge",
+        "Infrastructure",
+        "Pipeline",
+        "HVAC",
+        "Boiler",
+        "Electrical Safety",
+        "Machine Upgrade"
+    ],
+
+    "GSCM": [
+        "Supply Chain",
+        "Procurement",
+        "Vendor",
+        "Supplier",
+        "Warehouse",
+        "Logistics",
+        "Port",
+        "Shipping",
+        "Customs",
+        "Freight",
+        "Import",
+        "Export",
+        "Container",
+        "Inventory"
+    ],
+
+    "IT": [
+        "Artificial Intelligence",
+        "Cyber Security",
+        "Cloud",
+        "Software",
+        "ERP",
+        "Digital",
+        "Automation"
+    ],
+
+    "EHS": [
+        "Fire",
+        "Chemical",
+        "Flood",
+        "Cyclone",
+        "Heatwave",
+        "Earthquake",
+        "Industrial Accident",
+        "Safety",
+        "Pandemic",
+        "Disease",
+        "Environment"
+    ]
+}
