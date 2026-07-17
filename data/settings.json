@@ -1,10 +1,14 @@
 {
-  "update_time": "15:00 Asia/Kolkata",
-  "news_window_hours": 36,
-  "remove_duplicates": true,
-  "archive_reports": true,
-  "generate_ai_summary": true,
-  "minimum_priority": "medium",
-  "language": "en",
-  "timezone": "Asia/Kolkata"
+    "project_name": "Public Affairs Daily Intelligence Portal",
+    "timezone": "Asia/Kolkata",
+    "update_time": "15:00",
+    "news_window_hours": 36,
+    "remove_duplicate_news": true,
+    "check_previous_news": true,
+    "archive_reports": true,
+    "generate_ai_analysis": true,
+    "generate_department_mapping": true,
+    "minimum_priority": "medium",
+    "language": "en",
+    "max_retry": 3
 }
