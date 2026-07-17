@@ -292,3 +292,643 @@ def score_article(article):
             score += 2
 
     return score
+# ==========================================================
+# EXTRACT ARTICLE
+# ==========================================================
+
+def extract_article(entry, category, keyword):
+
+    """
+    Convert RSS entry to dictionary
+    """
+
+    try:
+
+        title = clean_title(entry.title)
+
+        link = getattr(entry, "link", "").strip()
+
+        summary = getattr(entry, "summary", "").strip()
+
+        published = getattr(entry, "published", "")
+
+        source = "Unknown"
+
+        if hasattr(entry, "source"):
+
+            source = getattr(entry.source, "title", "Unknown")
+
+        if not title or not link:
+            return None
+
+        if not within_window(published):
+            return None
+
+        article = {
+
+            "title": title,
+
+            "summary": summary,
+
+            "link": link,
+
+            "published": published,
+
+            "source": source,
+
+            "keyword": keyword,
+
+            "category": category,
+
+            "score": 0
+
+        }
+
+        article["score"] = score_article(article)
+
+        return article
+
+    except Exception as error:
+
+        logger.warning(
+
+            "Unable to process article : %s",
+
+            error
+
+        )
+
+        return None
+
+
+# ==========================================================
+# FETCH ONE KEYWORD
+# ==========================================================
+
+def fetch_keyword(category, keyword):
+
+    """
+    Fetch articles for one keyword
+    """
+
+    logger.info(
+
+        "Searching : %s",
+
+        keyword
+
+    )
+
+    websites = get_websites(category)
+
+    query = build_query(
+
+        keyword,
+
+        websites
+
+    )
+
+    url = rss_url(query)
+
+    feed = get_feed(url)
+
+    if feed is None:
+
+        return []
+
+    articles = []
+
+    for entry in feed.entries:
+
+        article = extract_article(
+
+            entry,
+
+            category,
+
+            keyword
+
+        )
+
+        if article:
+
+            articles.append(article)
+
+    logger.info(
+
+        "%s Articles Found",
+
+        len(articles)
+
+    )
+
+    return articles
+
+
+# ==========================================================
+# FETCH CATEGORY
+# ==========================================================
+
+def fetch_category(category):
+
+    """
+    Fetch all keywords
+    for one category
+    """
+
+    logger.info(
+
+        "Category : %s",
+
+        category
+
+    )
+
+    keywords = get_keywords(category)
+
+    all_articles = []
+
+    for keyword in keywords:
+
+        try:
+
+            articles = fetch_keyword(
+
+                category,
+
+                keyword
+
+            )
+
+            all_articles.extend(
+
+                articles
+
+            )
+
+        except Exception as error:
+
+            logger.warning(
+
+                "%s",
+
+                error
+
+            )
+
+    logger.info(
+
+        "%s Total Articles",
+
+        len(all_articles)
+
+    )
+
+    return all_articles
+
+
+# ==========================================================
+# REMOVE DUPLICATE URL
+# ==========================================================
+
+def remove_duplicate_urls(news):
+
+    unique = []
+
+    visited = set()
+
+    for article in news:
+
+        url = article["link"]
+
+        if url in visited:
+
+            continue
+
+        visited.add(url)
+
+        unique.append(article)
+
+    logger.info(
+
+        "Unique URL : %s",
+
+        len(unique)
+
+    )
+
+    return unique
+    # ==========================================================
+# SORT NEWS
+# ==========================================================
+
+def sort_news(news):
+
+    """
+    Sort news by
+
+    1. Score (Highest)
+
+    2. Published Date (Latest)
+    """
+
+    try:
+
+        return sorted(
+
+            news,
+
+            key=lambda article: (
+
+                article["score"],
+
+                parser.parse(article["published"])
+
+            ),
+
+            reverse=True
+
+        )
+
+    except Exception:
+
+        return news
+
+
+# ==========================================================
+# REMOVE EMPTY ARTICLES
+# ==========================================================
+
+def remove_empty(news):
+
+    cleaned = []
+
+    for article in news:
+
+        if not article["title"]:
+
+            continue
+
+        if not article["link"]:
+
+            continue
+
+        cleaned.append(article)
+
+    logger.info(
+
+        "Valid Articles : %s",
+
+        len(cleaned)
+
+    )
+
+    return cleaned
+
+
+# ==========================================================
+# FETCH ALL NEWS
+# ==========================================================
+
+def fetch_all_news():
+
+    logger.info(
+
+        "====================================="
+
+    )
+
+    logger.info(
+
+        "Fetching Public Affairs News"
+
+    )
+
+    logger.info(
+
+        "====================================="
+
+    )
+
+    news = []
+
+    # --------------------------------------
+
+    state_news = fetch_category(
+
+        "state"
+
+    )
+
+    news.extend(
+
+        state_news
+
+    )
+
+    # --------------------------------------
+
+    national_news = fetch_category(
+
+        "national"
+
+    )
+
+    news.extend(
+
+        national_news
+
+    )
+
+    # --------------------------------------
+
+    global_news = fetch_category(
+
+        "global"
+
+    )
+
+    news.extend(
+
+        global_news
+
+    )
+
+    logger.info(
+
+        "Collected Articles : %s",
+
+        len(news)
+
+    )
+
+    # --------------------------------------
+
+    news = remove_empty(
+
+        news
+
+    )
+
+    news = remove_duplicate_urls(
+
+        news
+
+    )
+
+    news = sort_news(
+
+        news
+
+    )
+
+    logger.info(
+
+        "Final Articles : %s",
+
+        len(news)
+
+    )
+
+    return news
+
+
+# ==========================================================
+# ARTICLE STATISTICS
+# ==========================================================
+
+def news_statistics(news):
+
+    stats = {
+
+        "total": len(news),
+
+        "state": 0,
+
+        "national": 0,
+
+        "global": 0
+
+    }
+
+    for article in news:
+
+        category = article["category"]
+
+        if category in stats:
+
+            stats[category] += 1
+
+    return stats
+
+
+# ==========================================================
+# DISPLAY SUMMARY
+# ==========================================================
+
+def print_statistics(news):
+
+    stats = news_statistics(news)
+
+    logger.info("")
+
+    logger.info("========== NEWS SUMMARY ==========")
+
+    logger.info(
+
+        "State Articles     : %s",
+
+        stats["state"]
+
+    )
+
+    logger.info(
+
+        "National Articles  : %s",
+
+        stats["national"]
+
+    )
+
+    logger.info(
+
+        "Global Articles    : %s",
+
+        stats["global"]
+
+    )
+
+    logger.info(
+
+        "Total Articles     : %s",
+
+        stats["total"]
+
+    )
+
+    logger.info(
+
+        "=================================="
+
+    )
+    # ==========================================================
+# EXPORT NEWS
+# ==========================================================
+
+def export_news(news, filename="latest_news.json"):
+    """
+    Export collected news to JSON.
+    """
+
+    import json
+
+    with open(
+
+        filename,
+
+        "w",
+
+        encoding="utf-8"
+
+    ) as file:
+
+        json.dump(
+
+            news,
+
+            file,
+
+            indent=4,
+
+            ensure_ascii=False
+
+        )
+
+    logger.info(
+
+        "News exported : %s",
+
+        filename
+
+    )
+
+
+# ==========================================================
+# SEARCH NEWS
+# ==========================================================
+
+def search_news(news, keyword):
+
+    keyword = keyword.lower()
+
+    results = []
+
+    for article in news:
+
+        if (
+
+            keyword in article["title"].lower()
+
+            or
+
+            keyword in article["summary"].lower()
+
+        ):
+
+            results.append(article)
+
+    return results
+
+
+# ==========================================================
+# MAIN TEST
+# ==========================================================
+
+if __name__ == "__main__":
+
+    logger.info("")
+
+    logger.info("=" * 60)
+
+    logger.info("Public Affairs News Engine")
+
+    logger.info("=" * 60)
+
+    try:
+
+        news = fetch_all_news()
+
+        print_statistics(news)
+
+        export_news(news)
+
+        logger.info("")
+
+        logger.info("Top 10 Articles")
+
+        logger.info("-" * 60)
+
+        for index, article in enumerate(news[:10], start=1):
+
+            logger.info(
+
+                "%s. %s",
+
+                index,
+
+                article["title"]
+
+            )
+
+            logger.info(
+
+                "Source    : %s",
+
+                article["source"]
+
+            )
+
+            logger.info(
+
+                "Published : %s",
+
+                article["published"]
+
+            )
+
+            logger.info(
+
+                "Category  : %s",
+
+                article["category"]
+
+            )
+
+            logger.info(
+
+                "Score     : %s",
+
+                article["score"]
+
+            )
+
+            logger.info(
+
+                "URL       : %s",
+
+                article["link"]
+
+            )
+
+            logger.info("-" * 60)
+
+    except Exception as error:
+
+        logger.exception(
+
+            "News Engine Failed : %s",
+
+            error
+
+        )
