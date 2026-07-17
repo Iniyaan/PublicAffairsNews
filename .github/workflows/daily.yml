@@ -1,12 +1,49 @@
-name: Public Affairs Daily News
+name: Public Affairs Daily Intelligence Portal
 
 on:
+  schedule:
+    # 3:00 PM IST = 9:30 AM UTC
+    - cron: "30 9 * * *"
+
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  test:
+
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Repository Created Successfully
-        run: echo "Repository structure is ready."
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Public Affairs Portal
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python app.py
+
+      - name: Commit Generated Files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add .
+
+          git diff --cached --quiet || git commit -m "Daily Public Affairs Update"
+
+          git push
