@@ -1,21 +1,30 @@
 {
-  "state": [
-    "https://www.thehindu.com/",
-    "https://www.dailythanthi.com/",
-    "https://www.dinamalar.com/",
-    "https://www.thanthitv.com/",
-    "https://www.puthiyathalaimurai.com/"
-  ],
+    "state": [
+        "thehindu.com",
+        "dailythanthi.com",
+        "dinamalar.com",
+        "thanthitv.com",
+        "puthiyathalaimurai.com"
+    ],
 
-  "national": [
-    "https://timesofindia.indiatimes.com/",
-    "https://www.thehindu.com/",
-    "https://www.ndtv.com/",
-    "https://www.indiatoday.in/",
-    "https://www.news18.com/"
-  ],
+    "national": [
+        "timesofindia.indiatimes.com",
+        "thehindu.com",
+        "ndtv.com",
+        "indiatoday.in",
+        "news18.com"
+    ],
 
-  "global": [
-    "https://news.google.com/"
-  ]
+    "global": [
+        "reuters.com",
+        "apnews.com",
+        "bbc.com",
+        "cnbc.com",
+        "bloomberg.com",
+        "ft.com"
+    ],
+
+    "aggregator": [
+        "news.google.com"
+    ]
 }
