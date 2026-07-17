@@ -1,3 +1,4 @@
+from website import generate_website
 """
 ===========================================================
 Public Affairs Daily Intelligence Portal
@@ -65,10 +66,7 @@ def main():
     # ------------------------------------------
 
     log("Generating Website...")
-
-    # website.py will be added next
-    # generate_website(news)
-
+generate_website(news)
     # ------------------------------------------
 
     log("Completed Successfully.")
